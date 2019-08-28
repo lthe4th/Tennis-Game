@@ -66,9 +66,9 @@
         function AImovement() {
             var paddle2Y_center = paddle2Y + (paddle_height / 2);
             if (paddle2Y_center < ballY - 10) {
-                paddle2Y += 10
+                paddle2Y += 7
             } else if (paddle2Y_center > ballY + 10) {
-                paddle2Y -= 10
+                paddle2Y -= 7
             }
 
         }
@@ -152,8 +152,8 @@
             ballY += ballSpeedY
             if (ballX > canvas.width - 20) {
                 if (ballY > paddle2Y && ballY < paddle2Y + paddle_height) {
-                    ballSpeedX = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
-                    ballSpeedY = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedX = -Math.floor((Math.random() * 12) - (Math.random() * 8) + (Math.random() * 8));
+                    ballSpeedY = -Math.floor((Math.random() * 12) - (Math.random() * 8) + (Math.random() * 8));
                     ballSpeedX--;
                     hitSound.play();
                 } else if(ballX > canvas.width) {
@@ -170,8 +170,8 @@
             }
             if (ballX < 20) {
                 if (ballY > paddle1Y && ballY < paddle1Y + paddle_height) {
-                    ballSpeedX = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
-                    ballSpeedY = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedX = Math.floor((Math.random() * 12) - (Math.random() * 8) + (Math.random() * 8));
+                    ballSpeedY = Math.floor((Math.random() * 12) - (Math.random() * 8) + (Math.random() * 8));
                     ballSpeedX++;
                     hitSound.play();
                 } else if (ballX < 0){
@@ -184,11 +184,22 @@
                 }
             }
             if (ballY > canvas.height) {
-                ballSpeedY = -ballSpeedY;
+                if(ballSpeedX>0){
+                    ballSpeedX +=Math.floor((Math.random() * 3));
+                }else
+                if(ballSpeedX<0){
+                    ballSpeedX-=Math.floor((Math.random() * 3));
+                }
+                ballSpeedY = -ballSpeedY
             }
-
             if (ballY < 0) {
-                ballSpeedY = -ballSpeedY;
+                if(ballSpeedX>0){
+                    ballSpeedX +=5;
+                }else
+                if(ballSpeedX<0){
+                    ballSpeedX-=5;
+                }
+                ballSpeedY = -ballSpeedY
             }
 
         }
