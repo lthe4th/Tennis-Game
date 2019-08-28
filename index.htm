@@ -156,7 +156,7 @@
                     ballSpeedY = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
                     ballSpeedX--;
                     hitSound.play();
-                } else {
+                } else if(ballX > canvas.width) {
                     turn = true;
                     playerScore++;
                     ballReset();
@@ -174,7 +174,7 @@
                     ballSpeedY = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
                     ballSpeedX++;
                     hitSound.play();
-                } else {
+                } else if (ballX < 0){
                     turn = false;
                     botScore++;
                     ballReset();
