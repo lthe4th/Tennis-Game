@@ -150,7 +150,7 @@
         function moveBall() {
             ballX += ballSpeedX
             ballY += ballSpeedY
-            if (ballX > canvas.width) {
+            if (ballX > canvas.width -20) {
                 if (ballY > paddle2Y && ballY < paddle2Y + paddle_height) {
                     ballSpeedX = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
                     ballSpeedY = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
@@ -168,7 +168,7 @@
                 }
 
             }
-            if (ballX < 0) {
+            if (ballX < 20) {
                 if (ballY > paddle1Y && ballY < paddle1Y + paddle_height) {
                     ballSpeedX = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
                     ballSpeedY = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
