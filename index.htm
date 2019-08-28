@@ -37,7 +37,7 @@
             mainTheme = new Audio("Home.mp3")
             mainTheme.play();
             hitSound = new Audio("hit.wav");
-            ding = new Audio("ding.mp3")
+            ding = new Audio("ding.mp3");
             bustedSound = new Audio("busted.wav");
             canvas = document.getElementById("TCanvas");
             canvasContext = canvas.getContext("2d");
@@ -160,7 +160,7 @@
                     turn = true;
                     playerScore++;
                     ballReset();
-                    ding.play()
+                    ding.play();
                     if (gameover) {
                         ding.pause();
                     }
