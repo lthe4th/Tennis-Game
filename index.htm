@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="TCanvas" width="1300" height="600"></canvas>
+    <script>
+        var canvas;
+        var canasContext;
+        var ballX = 50;
+        var ballY = 50;
+        var FPS = 60;
+        var ballSpeedX = 8;
+        var ballSpeedY = 4;
+        var paddle1Y = 250;
+        var paddle2Y = 250;
+        const paddle_height = 100;
+        const paddle_thickness = 10;
+        var playerScore = 0;
+        var botScore = 0;
+        var turn = true;
+        const win_score = 5;
+        var gameover = false;
+        var hitSound;
+        var bustedSound;
+        var ding;
+        var mainTheme;
+
+        // load the main thing
+        window.onload = function () {
+            mainTheme = new Audio("Home.mp3")
+            mainTheme.play();
+            hitSound = new Audio("hit.wav");
+            ding = new Audio("ding.mp3")
+            bustedSound = new Audio("busted.wav");
+            canvas = document.getElementById("TCanvas");
+            canvasContext = canvas.getContext("2d");
+            setInterval(update, 1000 / FPS)
+
+            canvas.addEventListener('mousedown', checkMouseClick);
+
+            canvas.addEventListener('mousemove', function (evt) {
+                var mousePos = calMousePos(evt);
+                paddle1Y = mousePos.y - (paddle_height / 2);
+            });
+        }
+
+        // 
+        function checkMouseClick(evt) {
+            if (gameover) {
+                playerScore = 0;
+                botScore = 0;
+                gameover = false;
+                turn = true;
+            }
+        }
+
+
+        // make the AI (the bot paddle) move base on the ball position 
+        function AImovement() {
+            var paddle2Y_center = paddle2Y + (paddle_height / 2);
+            if (paddle2Y_center < ballY - 10) {
+                paddle2Y += 10
+            } else if (paddle2Y_center > ballY + 10) {
+                paddle2Y -= 10
+            }
+
+        }
+
+        // check the mouse postion to control the paddle
+        function calMousePos(evt) {
+            var mouseX = evt.clientX;
+            var mouseY = evt.clientY;
+            return {
+                x: mouseX,
+                y: mouseY
+            };
+        }
+        // update realtime
+        function update() {
+            if (gameover === true) {
+                mainTheme.currentTime = 0;
+                mainTheme.pause();
+                hitSound.pause();
+            } else {
+                mainTheme.play();
+            }
+            AImovement();
+            moveBall();
+            renderAll()
+        }
+
+        // render to canvas something
+        function renderAll() {
+
+            drawRect(0, 0, canvas.width, canvas.height, "black");
+            if (gameover === true) {
+                canvasContext.fillStyle = 'white'
+                if (playerScore === win_score) {
+                    canvasContext.fillText("You win !", canvas.width / 4, canvas.height / 4);
+                } else if (botScore === win_score) {
+                    canvasContext.fillText("Game Over !", canvas.width / 4, canvas.height / 4);
+                    bustedSound.play();
+
+
+
+                }
+
+                canvasContext.fillText("Play Again! (click to continue)", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            drawBall();
+            drawRect(5, paddle1Y, paddle_thickness, paddle_height, 'white');
+            drawRect(canvas.width - 15, paddle2Y, paddle_thickness, paddle_height, 'white');
+
+
+            canvasContext.fillText(`playerScore: ` + playerScore, 100, 500);
+
+            canvasContext.fillText(`botScore: ` + botScore, canvas.width - 100, 500);
+            drawNet();
+
+        }
+
+        // reset the ball after score !
+        function ballReset() {
+            if (playerScore === win_score || botScore === win_score) {
+                gameover = true;
+            }
+
+            if (turn) {
+
+                ballSpeedX = 5
+                ballSpeedY = 3
+            } else {
+
+                ballSpeedX = -5
+                ballSpeedY = -3
+            }
+
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+        }
+        // moveBall(change the value off [ballX] [ballY] [ballSpeed]...etc. sort of)
+        function moveBall() {
+            ballX += ballSpeedX
+            ballY += ballSpeedY
+            if (ballX > canvas.width) {
+                if (ballY > paddle2Y && ballY < paddle2Y + paddle_height) {
+                    ballSpeedX = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedY = -Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedX--;
+                    hitSound.play();
+                } else {
+                    turn = true;
+                    playerScore++;
+                    ballReset();
+                    ding.play()
+                    if (gameover) {
+                        ding.pause();
+                    }
+
+                }
+
+            }
+            if (ballX < 0) {
+                if (ballY > paddle1Y && ballY < paddle1Y + paddle_height) {
+                    ballSpeedX = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedY = Math.floor((Math.random() * 16) - (Math.random() * 15) + (Math.random() * 15));
+                    ballSpeedX++;
+                    hitSound.play();
+                } else {
+                    turn = false;
+                    botScore++;
+                    ballReset();
+                    ballReset();
+
+
+                }
+            }
+            if (ballY > canvas.height) {
+                ballSpeedY = -ballSpeedY;
+            }
+
+            if (ballY < 0) {
+                ballSpeedY = -ballSpeedY;
+            }
+
+        }
+        // draw Rectangle(pretty simple to understand)
+        function drawRect(X, Y, W, H, color) {
+            canvasContext.fillStyle = color;
+            canvasContext.fillRect(X, Y, W, H);
+        }
+
+
+        // draw a circle (which is the tennis ball)
+        function drawBall() {
+            canvasContext.fillStyle = 'white';
+            canvasContext.beginPath();
+            canvasContext.arc(ballX, ballY, 10, 0, Math.PI * 2, true);
+            canvasContext.fill()
+
+        }
+
+        //
+        function drawNet() {
+            for (var i = 0; i < canvas.height; i += 40) {
+                drawRect(canvas.width / 2 - 2, i, 2, 20, 'white')
+            }
+        }
+    </script>
+</body>
+
+</html>
